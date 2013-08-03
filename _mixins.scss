@@ -1,0 +1,33 @@
+@mixin make-grid($prefix: '', $columns: $grid-columns) {
+	$grid-percentages: ();
+	@if $prefix == '' {
+		$prefix: '';
+	}@else {
+		$prefix: $prefix + '-';
+	}
+	@for $i from 1 through $columns {
+		@for $j from 1 through $i {
+			$percentage: (100% / $i) * $j;
+			@if not index($grid-percentages, $percentage) {
+				.#{$prefix}span-#{$j}-#{$i} {
+					width: $percentage;
+					padding-left: $grid-gutter-width;
+				}
+				.#{$prefix}offset-#{$j}-#{$i} {
+					margin-left: $percentage;
+				}
+				$grid-percentages: append($grid-percentages, $percentage);
+			}
+		}
+	}
+}
+
+@mixin make-responsive-grid($breakpoints: $grid-breakpoints) {
+	@each $breakpoint in $breakpoints {
+		$key: nth($breakpoint, 1);
+		$value: nth($breakpoint, 2);
+		@media (min-width: $value) {
+			@include make-grid($prefix: $key);
+		}
+	}
+}
